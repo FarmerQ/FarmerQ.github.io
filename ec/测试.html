@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+  <style>
+    *{
+      padding: 0;margin: 0
+    }
+    body{
+      position: relative;
+    }
+    .box{
+      height: 5000px;
+    }
+    .box1{
+      height: 0px;
+      width: 100%;
+      background-color: hotpink;
+      position: fixed;
+      top: 0;
+      left: 0;
+      transition: all 1s ease;
+      -webkit-transition: all 1s ease;
+    }
+    .bo{
+      height: 90px;
+      margin-top:2100px;
+      width: 100%;
+      background-color: blue;
+      
+    }
+    .box2{
+      height: 80px;
+    }
+    
+  </style>
+</head>
+<body>
+  <div class="box">
+    <div id="box1" class="box1">123</div>
+    <div class="bo"></div>
+  </div>
+  <script>
+    var box =document.getElementById("box1");
+    window.onscroll=function(){
+      console.log(document.documentElement.scrollTop);
+      if(document.documentElement.scrollTop>=2000){
+        box.className="box1 box2";
+        // clearInterval(timer);
+        // var timer=setInterval(function(){
+        //   hg+=10;
+        //   if(hg>=80){
+        //     clearInterval(timer);
+        //   }
+        //   box.style.height=hg+"px";
+        // },20);
+      }else{
+        // box.style.height=0;
+        box.className="box1";
+      }
+    }
+  </script>
+</body>
+</html>
