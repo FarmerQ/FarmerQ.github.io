@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>我的歌单</title>
+    <script src="js/vue-2.4.0.js"></script>
+    <style>
+        *{font-family: "SimHei";
+        color:rgb(255, 208, 0);}
+        body{
+            background-color: #000;
+        }
+        #pic{
+            /* 通过position设置相对于浏览器窗口定位 */
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            /* 设置层级 */
+            z-index: -10;
+            /* 设置背景图位置 平铺方式 固定页面 大小(css3属性)*/
+            background-position: center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            background-size: cover;
+            /* 设置背景大小属性浏览器兼容问题 */
+            -moz-background-size: cover;
+            -webkit-background-size: cover;
+            -o-background-size: cover;
+            zoom: 1;
+            /* 设置css3动画 */
+            opacity: 1;
+            transition: opacity 1s linear;
+            /* 设置动画浏览器兼容问题 */
+            -moz-transition: opacity 1s linear;
+            -webkit-transition: opacity 1s linear;
+            -o-transition: opacity 1s linear;
+            /* background-image: url(images/0.jpg); */
+        }
+        a {
+            text-decoration: none;
+            /* color: #fff; */
+        }
+        .box_title h1{
+            font-size: 45px;
+            margin:50px auto;
+            line-height: 50px;
+            text-align: center;
+        }
+        .inp{
+            margin-right: 20px;
+            height: 20px;
+            width:200px;
+            border-radius: 10%;
+            background-color: azure;
+        }
+        .add {
+            display:inline-block;
+            width: 60px;
+            height: 30px;
+            background-color: rgba(37, 28, 28, 0.589);
+            border-radius: 10%;
+            line-height: 30px;
+            text-align: center;
+            
+        }
+        .add:hover{
+            background-color: #000;
+            transition:all 0.5s ease;
+        }
+        audio{
+            position: absolute;
+            right: 50px;
+            top: 130px;
+        }
+        
+        h3 {
+            margin-top: 30px;
+        }
+
+        ul {
+            margin-top: 30px;
+        }
+
+        li {
+            /* font-family: 'DFKai-SB'; */
+            border: 1px dashed #000;
+            margin: 5px;
+            line-height: 30px;
+            padding: 5px;
+        }
+
+        li:hover {
+            cursor: pointer;
+            background-color: rgb(255, 208, 0);
+            transition: all 0.8s ease;
+            color: rgb(0, 1, 63);
+            font-size: 20px;
+            font-weight: bold;
+        }
+        
+        .v-enter,.v-leave-to{
+            opacity: 0;
+            transform: translateY(80px);
+        }
+        .v-enter-active,.v-leave-active{
+            transition:all 1s ease;
+        }
+        .v-move{
+            transition: all 1s ease;
+        }
+        .v-leave-active{
+            position:absolute;
+        }
+    </style>
+</head>
+
+<body>
+    <div>
+        <img src="" alt="" id="pic">
+    </div>
+    <div id="app">
+        <!-- <transition @before-enter="beforeEnter" @enter="enter" mode="in-out"> -->
+            <div>
+                <div class="box_title">
+                    <h1>我的歌单</h1>
+                </div>
+                <div>
+                    <label>
+                        歌名:
+                        <input type="text" v-model="name" class="inp"> 
+                        链接地址:
+                        <input type="text" v-model="link" class="inp">
+                        搜索:
+                        <input type="text" v-model="keywords" class="inp">
+                    </label>
+                    <a href="#" class="add" @click="add">添加</a>
+                    
+                    <h3>歌曲列表:</h3>
+                    <hr />
+                    <audio src="http://bd.kuwo.cn/yinyue/48017883?from=baidu" controls></audio>
+                    <transition-group appear tag="ul">
+                        <!-- @after-enter="afterEnter" -->
+                        
+                        <li v-for="(item,i) in search(keywords)" :key="item.id" @click="del(i)">
+                            {{item.name}}
+                            <!-- a连接需要跨域访问 -->
+                            <a :href="item.net" target="_blank" style="float:right" @click.stop>播放</a>
+                        </li>
+                    </transition-group>
+
+                </div>
+            </div>
+        <!-- </transition> -->
+    </div>
+    <script>
+        var vm = new Vue({
+            el: '#app',
+            data: {
+                id: '',
+                name: '',
+                link: '',
+                keywords:'',
+                list: [
+                    { id: 1, name: '彩虹下面', net: 'http://bd.kuwo.cn/yinyue/48017883?from=baidu' },
+                    { id: 2, name: '原来那天的阳光', net: 'http://bd.kuwo.cn/yinyue/1424895?from=baidu' },
+                    { id: 3, name: '南方姑娘', net: 'http://www.kugou.com/song/26l966.html?frombaidu#hash=CE90F50F6CA3BCCCCA69DE10C6417DF1&album_id=0' },
+                    { id: 4, name: '小跳蛙', net: 'http://www.kuwo.cn/yinyue/591718/' },
+                ]
+            },
+            methods: {
+                add() {
+                    this.list.push({
+                        id:this.id,
+                        name:this.name,
+                        net:this.net,
+                    })
+                    this.id=this.name=this.net=""
+                
+                },
+                del(i) {
+                    this.list.splice(i, 1)
+                },
+                // beforeEnter(el){
+                //     el.style.opacity=0;
+                //     el.style.transform="translateY(100px)"
+                // },
+                // enter(el){
+                //     el.offsetWidth
+                //     el.style.opacity=1;
+                //     el.style.transition="all 1.5s ease"
+                //     // done()
+                // },
+                
+                search(keywords){
+                    return this.list.filter(item=>{
+                        // console.log(list2)
+                        // console.log(item)
+                        if(item.name.includes(keywords)){
+                            // 若想num也可作为关键字,那么num中的数字必须加引号
+                        return item
+                        }
+                    })
+                }
+                // after(el){},
+                
+                
+                
+            }
+        })
+
+// 轮播图----------------------------------------------------------------------------------
+        var picId=document.getElementById("pic");
+        var timer="";
+        var num=20;//图片个数
+        var picNum=1;//图片序号
+
+
+        
+        // 调用动画函数
+        runPic();
+        //设置图片轮播效果
+        setInterval(function(){
+            runPic();
+            if(picNum>num){
+                picNum=1;
+            }
+        },1900)
+        // 设置图片动画函数
+        function runPic(){
+            // 获取图片路径
+            // 调用透明度定时器
+            picOpacity();
+            picNum=picNum<10?"0"+picNum:picNum;
+            picId.src="imgs/"+picNum+".jpg";
+            picNum++;
+        }
+        // 设置透明度定时器 由于透明度从1-0, 小数间运算会产生bug. 将透明度扩大至1倍 再除10  这样即可避免bug存在
+        function picOpacity(){
+            // 先清理掉timer定时器 防止在运行timer定时器时,上一次定时器还未运行完毕
+            clearInterval(timer);
+            if(my$opacity=10){
+                timer=setInterval(function(){
+                picId.style.opacity=my$opacity/10;
+                my$opacity--;
+                if(my$opacity<0){
+                    clearInterval(timer);
+                }},100)
+            }
+        }
+        
+        
+        
+    </script>
+</body>
+
+</html>
